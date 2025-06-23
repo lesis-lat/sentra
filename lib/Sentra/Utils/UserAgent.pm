@@ -3,6 +3,8 @@ package Sentra::Utils::UserAgent {
     use warnings;
     use LWP::UserAgent;
 
+    our $VERSION = '0.0.1';
+
     sub new {
         my ($self, $token) = @_;
 
