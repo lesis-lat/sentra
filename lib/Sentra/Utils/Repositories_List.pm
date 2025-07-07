@@ -1,9 +1,12 @@
 package Sentra::Utils::Repositories_List {
+    our $VERSION = '0.0.1';
     use strict;
     use warnings;
     use JSON;
     use Sentra::Utils::UserAgent;
-    
+    use Readonly;
+    Readonly my $HTTP_OK => 200;
+
     sub new {
         my ($self, $org, $token) = @_;
 
@@ -15,15 +18,15 @@ package Sentra::Utils::Repositories_List {
             my $url      = "https://api.github.com/orgs/$org/repos?per_page=100&page=$page";
             my $response = $userAgent -> get($url);
 
-            if ($response -> code() == 200) {
+            if ($response -> code() == $HTTP_OK) {
                 my $data  = decode_json($response -> content());
                 
-                if (scalar(@$data) == 0) {
-                    last;
-                }
+                last if scalar(@{$data}) == 0;
 
-                for my $repo (@$data) {
-                    push @repos, "$org/$repo->{name}" unless $repo->{archived};
+                foreach my $repo (@{$data}) {
+                    if (!$repo->{archived}) {
+                        push @repos, "$org/$repo->{name}";
+                    }
                 }
 
                 $page++;

@@ -10,11 +10,16 @@ use Sentra::Engine::Maintained;
 use Sentra::Engine::SearchFiles;
 use Sentra::Engine::SlackWebhook;
 use Sentra::Engine::DependabotMetrics;
+use Readonly;
+
+Readonly my $PER_PAGE => 100;
+
+our $VERSION = '0.0.1';
 
 sub main {
     my ($org, $token, $webhook, $message, $help, %options);
     
-    my $per_page = 100;
+    my $per_page = $PER_PAGE;
     
     GetOptions (
         'o|org=s'       => \$org,

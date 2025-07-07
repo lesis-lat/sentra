@@ -39,7 +39,7 @@ $ cpanm --installdeps .
 ```
 $ perl sentra.pl
 
-Sentra v0.0.3
+Sentra v0.0.1
 Core Commands
 ==============
 Command                         Description
