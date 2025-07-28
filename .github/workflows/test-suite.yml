@@ -1,0 +1,39 @@
+name: Test Suite
+
+on:
+  pull_request:
+    branches:
+      - main
+      - develop
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup Perl
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y perl cpanminus
+
+      - name: Install dependencies
+        run: sudo cpanm --installdeps --with-test .
+
+      - name: Run tests
+        working-directory: ./tests
+        run: prove -r
+
+  coverage:
+    uses: ./.github/workflows/test-coverage.yml
+
+  report-coverage:
+    needs: coverage
+    runs-on: ubuntu-latest
+    steps:
+      - name: Show coverage results
+        run: |
+          echo "Total coverage percentage: ${{ needs.coverage.outputs.coverage_percent }}%"
+          echo "Coverage badge URL: ${{ needs.coverage.outputs.coverage_badge_url }}"
