@@ -1,11 +1,13 @@
 package Sentra::Engine::SearchFiles {
-    our $VERSION = '0.0.1';
     use strict;
     use warnings;
     use JSON;
     use Sentra::Utils::UserAgent;
     use Sentra::Utils::Repositories_List;
     use Readonly;
+
+    our $VERSION = '0.0.1';
+    
     Readonly my $HTTP_NOT_FOUND => 404;
 
     sub new {
