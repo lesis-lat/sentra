@@ -1,7 +1,8 @@
 package Sentra::Utils::Helper {
-    our $VERSION = '0.0.1';
     use strict;
     use warnings;
+    
+    our $VERSION = '0.0.1';
 
     sub new {
         return join("\n",

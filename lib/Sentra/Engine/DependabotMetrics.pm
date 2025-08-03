@@ -1,11 +1,13 @@
 package Sentra::Engine::DependabotMetrics {
-    our $VERSION = '0.0.1';
     use strict;
     use warnings;
     use JSON;
     use Sentra::Utils::UserAgent;
     use Sentra::Utils::Repositories_List;
     use Readonly;
+    
+    our $VERSION = '0.0.1';
+
     Readonly my $HTTP_OK => 200;
 
     sub new {
@@ -34,10 +36,12 @@ package Sentra::Engine::DependabotMetrics {
                 if (scalar(@{$alert_data}) == 0) {
                     last;
                 }
+
                 $total_alerts += scalar(@{$alert_data});
                 
                 foreach my $alert (@{$alert_data}) {
                     my $severity = $alert->{security_vulnerability}{severity} || 'unknown';
+                    
                     if (exists $severity_count{$severity}) {
                         $severity_count{$severity}++;
                     }
@@ -48,6 +52,7 @@ package Sentra::Engine::DependabotMetrics {
         foreach my $sev (keys %severity_count) {
             $output .= "Severity $sev: $severity_count{$sev}\n";
         }
+        
         $output .= "Total DependaBot Alerts: $total_alerts\n";
 
         return $output;

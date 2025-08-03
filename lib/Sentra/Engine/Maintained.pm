@@ -1,5 +1,4 @@
 package Sentra::Engine::Maintained {
-    our $VERSION = '0.0.1';
     use strict;
     use warnings;
     use JSON;
@@ -8,6 +7,9 @@ package Sentra::Engine::Maintained {
     use Sentra::Utils::UserAgent;
     use Sentra::Utils::Repositories_List;
     use Readonly;
+
+    our $VERSION = '0.0.1';
+    
     Readonly my $HTTP_OK => 200;
 
     sub new {
@@ -27,6 +29,7 @@ package Sentra::Engine::Maintained {
                     my $last_commit_date_str = $commits->[0]{commit}{committer}{date};
                     my $last_commit_date     = DateTime::Format::ISO8601 -> parse_datetime($last_commit_date_str);
                     my $ninety_days_ago      = DateTime -> now -> subtract(days => 90);
+                    
                     if ($ninety_days_ago > $last_commit_date) {
                         $output .= "The repository https://github.com/$repository has not been updated for more than 90 days.\n";
                     }

@@ -1,10 +1,12 @@
 package Sentra::Utils::Repositories_List {
-    our $VERSION = '0.0.1';
     use strict;
     use warnings;
     use JSON;
     use Sentra::Utils::UserAgent;
     use Readonly;
+
+    our $VERSION = '0.0.1';
+
     Readonly my $HTTP_OK => 200;
 
     sub new {

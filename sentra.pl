@@ -12,9 +12,9 @@ use Sentra::Engine::SlackWebhook;
 use Sentra::Engine::DependabotMetrics;
 use Readonly;
 
-Readonly my $PER_PAGE => 100;
-
 our $VERSION = '0.0.1';
+
+Readonly my $PER_PAGE => 100;
 
 sub main {
     my ($org, $token, $webhook, $message, $help, %options);
