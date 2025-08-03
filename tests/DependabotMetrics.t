@@ -1,7 +1,5 @@
 package DependabotMetrics;
 
-our $VERSION = '0.0.1';
-
 use strict;
 use warnings;
 use lib "../lib/";
@@ -11,6 +9,8 @@ use Sentra::Engine::DependabotMetrics;
 use HTTP::Response; 
 use JSON;
 use Readonly;
+
+our $VERSION = '0.0.1';
 
 Readonly my $HTTP_OK => 200;
 Readonly my $HTTP_NOT_FOUND => 404;

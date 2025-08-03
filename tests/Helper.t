@@ -1,12 +1,12 @@
 package Helper;
 
-our $VERSION = '0.0.1';
-
 use strict;
 use warnings;
 use lib "../lib/";
 use Sentra::Utils::Helper;
 use Test::More;
+
+our $VERSION = '0.0.1';
 
 subtest 'Helper' => sub {
     plan tests => 20;

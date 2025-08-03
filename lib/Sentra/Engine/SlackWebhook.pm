@@ -4,7 +4,7 @@ package Sentra::Engine::SlackWebhook {
     use Mojo::UserAgent;
     use JSON;
 
-    our $VERSION = '0.0.1';
+    our $VERSION = '0.0.2';
 
     sub new {
         my ($class, $message, $webhook) = @_;
@@ -16,10 +16,11 @@ package Sentra::Engine::SlackWebhook {
             'Content-Type' => 'application/json'
         } => $payload);
 
-        my $res = $text -> result;
+        my $res = $text -> result();
         
         if (!$res) {
-            my $err = $text -> error;
+            my $err = $text -> error();
+            
             return "Failed to send message: [" . ($err->{message} || "Unknown error") . "]\n";
         }
        
