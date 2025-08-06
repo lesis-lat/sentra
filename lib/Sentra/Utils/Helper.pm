@@ -2,11 +2,11 @@ package Sentra::Utils::Helper {
     use strict;
     use warnings;
     
-    our $VERSION = '0.0.1';
+    our $VERSION = '0.0.2';
 
     sub new {
         return join("\n",
-            "Sentra v0.0.1",
+            "Sentra v$VERSION",
             "Core Commands",
             "    ==============",
             "        Command                         Description",
