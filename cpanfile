@@ -8,4 +8,5 @@ requires "DateTime",                    "1.66";
 on 'test' => sub {
 requires "Test::More",                  "1.302214";
 requires "Test::MockModule",            "0.180.0";
+requires "Readonly",                    "2.05";
 };
