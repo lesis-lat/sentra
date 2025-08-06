@@ -6,7 +6,7 @@ use lib "../lib/";
 use Sentra::Utils::Helper;
 use Test::More;
 
-our $VERSION = '0.0.1';
+our $VERSION = '0.0.2';
 
 subtest 'Helper' => sub {
     plan tests => 20;
@@ -16,7 +16,7 @@ subtest 'Helper' => sub {
     ok(defined $helper_output, 'Helper output is defined');
     is(ref $helper_output, q{}, 'Helper output is a string');
 
-    like($helper_output, qr/Sentra\ v0\.0\.1/xms, 'Helper output contains version information');
+    like($helper_output, qr/Sentra\ v0\.0\.2/xms, 'Helper output contains version information');
     like($helper_output, qr/Core\ Commands/xms, 'Helper output contains core commands');
 
     ok($helper_output =~ /-o,\ --org/xms, 'Helper output contains org option');
