@@ -6,7 +6,7 @@ package Sentra::Engine::DependabotMetrics {
     use Sentra::Utils::Repositories_List;
     use Readonly;
     
-    our $VERSION = '0.0.1';
+    our $VERSION = '0.0.2';
 
     Readonly my $HTTP_OK => 200;
 
@@ -16,7 +16,7 @@ package Sentra::Engine::DependabotMetrics {
         my $userAgent = Sentra::Utils::UserAgent -> new($token);
         my @repositories_list = Sentra::Utils::Repositories_List -> new($org, $token);
         
-        my $output            = q{};
+        my $output         = q{};
         my $total_alerts   = 0;
         my %severity_count = (
             low      => 0, 

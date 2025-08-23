@@ -1,7 +1,5 @@
 package SearchFiles;
 
-our $VERSION = '0.0.1';
-
 use strict;
 use warnings;
 use lib "../lib/";
@@ -10,8 +8,10 @@ use Test::MockModule;
 use HTTP::Response; 
 use JSON;     
 use Sentra::Engine::SearchFiles;      
-
 use Readonly;
+
+our $VERSION = '0.0.1';
+
 Readonly my $HTTP_OK => 200;
 Readonly my $HTTP_NOT_FOUND => 404;
 Readonly my $PER_PAGE => 100;
