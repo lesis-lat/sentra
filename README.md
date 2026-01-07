@@ -49,6 +49,8 @@ Command                         Description
 -mt, --maintained               Check last commit date of repositories
 -d, --dependency                Check for dependabot.yaml file in repositories
 -M, --metrics                   See some metrics based on GHAS
+-ss, --secret-scanning          Check repositories for secret scanning tools
+--sast                          Check repositories for SAST tools
 -w, --webhook                   Set the webhook address for Slack
 -m, --message                   Message to send via Slack webhook
 ```
