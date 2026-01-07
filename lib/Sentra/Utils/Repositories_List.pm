@@ -10,7 +10,7 @@ package Sentra::Utils::Repositories_List {
     Readonly my $HTTP_OK => 200;
 
     sub new {
-        my ($self, $org, $token) = @_;
+        my (undef, $org, $token) = @_;
 
         my @repos;
         my $page = 1;
@@ -22,7 +22,7 @@ package Sentra::Utils::Repositories_List {
 
             if ($response -> code() == $HTTP_OK) {
                 my $data  = decode_json($response -> content());
-                
+
                 last if scalar(@{$data}) == 0;
 
                 foreach my $repo (@{$data}) {
