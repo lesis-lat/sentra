@@ -18,9 +18,9 @@ Readonly my $PER_PAGE => 100;
 
 sub main {
     my ($org, $token, $webhook, $message, $help, %options);
-    
+
     my $per_page = $PER_PAGE;
-    
+
     GetOptions (
         'o|org=s'       => \$org,
         't|token=s'     => \$token,
@@ -54,7 +54,7 @@ sub main {
 
     if ($help) {
         print Sentra::Utils::Helper -> new();
-        
+
         return 0;
     }
 
