@@ -9,7 +9,7 @@ use Sentra::Utils::Helper;
 use Test::More;
 
 subtest 'Helper' => sub {
-    plan tests => 20;
+    plan tests => 22;
 
     my $helper_output = Sentra::Utils::Helper->new();
 
@@ -24,6 +24,8 @@ subtest 'Helper' => sub {
     ok($helper_output =~ /-mt,\ --maintained/xms, 'Helper output contains maintained option');
     ok($helper_output =~ /-d,\ --dependency/xms, 'Helper output contains dependency option');
     ok($helper_output =~ /-M,\ --metrics/xms, 'Helper output contains metrics option');
+    ok($helper_output =~ /-ss,\ --secret-scanning/xms, 'Helper output contains secret scanning option');
+    ok($helper_output =~ /--sast/xms, 'Helper output contains sast option');
     ok($helper_output =~ /-w,\ --webhook/xms, 'Helper output contains webhook option');
     ok($helper_output =~ /-m,\ --message/xms, 'Helper output contains message option');
 
@@ -41,6 +43,8 @@ subtest 'Helper' => sub {
         '-mt, --maintained',
         '-d, --dependency',  
         '-M, --metrics',
+        '-ss, --secret-scanning',
+        '--sast',
         '-w, --webhook',
         '-m, --message'
     );
