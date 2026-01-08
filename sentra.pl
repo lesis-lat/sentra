@@ -31,16 +31,14 @@ sub main {
         'mt|maintained' => \$options{'maintained'},
         'd|dependency'  => \$options{'dependency'},
         'M|metrics'     => \$options{'metrics'},
-        'ss|secret-scanning' => \$options{'secret_scanning'},
-        'sast'               => \$options{'sast'},
+        'static-analysis'    => \$options{'security_tools'},
     );
 
     my %dispatch_table = (
         'metrics'    => sub { Sentra::Engine::DependabotMetrics -> new($org, $token, $per_page) },
         'dependency' => sub { Sentra::Engine::SearchFiles -> new($org, $token, $per_page) },
         'maintained' => sub { Sentra::Engine::Maintained -> new($org, $token, $per_page) },
-        'secret_scanning' => sub { Sentra::Engine::SecurityTools -> new($org, $token, $per_page) },
-        'sast'            => sub { Sentra::Engine::SecurityTools -> new($org, $token, $per_page) },
+        'security_tools' => sub { Sentra::Engine::SecurityTools -> new($org, $token, $per_page) },
     );
 
     for my $option (keys %options) {
