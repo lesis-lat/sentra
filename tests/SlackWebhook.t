@@ -14,24 +14,24 @@ our $VERSION = '0.0.1';
 
 Readonly my $HTTP_OK => 200;
 
-my $mock_ua = Test::MockModule->new('Mojo::UserAgent');
+my $mock_user_agent = Test::MockModule -> new('Mojo::UserAgent');
 
-$mock_ua->mock('post', sub {
+$mock_user_agent -> mock('post', sub {
     my ($self, $url, $headers, $payload_json) = @_;
     
-    my $tx = Mojo::Transaction::HTTP->new;
-    $tx->res(Mojo::Message::Response->new); 
-    $tx->res->code($HTTP_OK);
-    $tx->res->message('OK');
-    $tx->res->body('ok'); 
+    my $transaction = Mojo::Transaction::HTTP -> new;
+    $transaction -> res(Mojo::Message::Response -> new); 
+    $transaction -> res -> code($HTTP_OK);
+    $transaction -> res -> message('OK');
+    $transaction -> res -> body('ok'); 
     
-    return $tx; 
+    return $transaction; 
 });
 
 subtest 'SlackWebhook' => sub {
     plan tests => 1;
     
-    my $result_message = Sentra::Engine::SlackWebhook->new('Test message', 'https://hooks.slack.com/services/xxx/yyy/zzz');
+    my $result_message = Sentra::Engine::SlackWebhook -> new('Test message', 'https://hooks.slack.com/services/xxx/yyy/zzz');
     
     like($result_message, qr/Message\ sent\ successfully! \s \[ok\]/xms, 'Webhook message sent successfully');
 };

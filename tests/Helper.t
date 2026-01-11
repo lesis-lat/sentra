@@ -11,7 +11,7 @@ use Test::More;
 subtest 'Helper' => sub {
     plan tests => 22;
 
-    my $helper_output = Sentra::Utils::Helper->new();
+    my $helper_output = Sentra::Utils::Helper -> new();
 
     ok(defined $helper_output, 'Helper output is defined');
     is(ref $helper_output, q{}, 'Helper output is a string');

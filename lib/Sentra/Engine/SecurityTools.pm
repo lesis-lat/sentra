@@ -12,9 +12,9 @@ package Sentra::Engine::SecurityTools {
     sub new {
         my (undef, $org, $token, $per_page) = @_;
 
-        my $output            = q{};
-        my $userAgent         = Sentra::Utils::UserAgent -> new($token);
-        my @repositories_list = Sentra::Utils::Repositories_List -> new($org, $token);
+        my $output       = q{};
+        my $user_agent   = Sentra::Utils::UserAgent -> new($token);
+        my @repositories = Sentra::Utils::Repositories_List -> new($org, $token);
 
         my %secret_scanning_tools = (
             'Detect Secrets' => [
@@ -58,16 +58,16 @@ package Sentra::Engine::SecurityTools {
             ]
         );
 
-        foreach my $repository (@repositories_list) {
+        foreach my $repository (@repositories) {
             my @secret_tools_found;
             my @sast_tools_found;
 
             for my $tool (sort keys %secret_scanning_tools) {
                 for my $file (@{$secret_scanning_tools{$tool}}) {
                     my $tool_url = "https://api.github.com/repos/$repository/contents/$file";
-                    my $request  = $userAgent -> get($tool_url);
+                    my $response = $user_agent -> get($tool_url);
 
-                    if ($request -> code() == $HTTP_OK) {
+                    if ($response -> code() == $HTTP_OK) {
                         push @secret_tools_found, $tool;
                         last;
                     }
@@ -77,9 +77,9 @@ package Sentra::Engine::SecurityTools {
             for my $tool (sort keys %sast_tools) {
                 for my $file (@{$sast_tools{$tool}}) {
                     my $tool_url = "https://api.github.com/repos/$repository/contents/$file";
-                    my $request  = $userAgent -> get($tool_url);
+                    my $response = $user_agent -> get($tool_url);
 
-                    if ($request -> code() == $HTTP_OK) {
+                    if ($response -> code() == $HTTP_OK) {
                         push @sast_tools_found, $tool;
                         last;
                     }
