@@ -16,67 +16,67 @@ Readonly my $HTTP_OK => 200;
 Readonly my $HTTP_NOT_FOUND => 404;
 Readonly my $PER_PAGE => 100;
 
-my $mock_lwp_ua = Test::MockModule->new('LWP::UserAgent');
+my $mock_lwp_user_agent = Test::MockModule -> new('LWP::UserAgent');
 
-my $repo_list_page_count_sf = 0;
+my $repo_list_page_count_search_files = 0;
 
-$mock_lwp_ua->mock('get', sub {
+$mock_lwp_user_agent -> mock('get', sub {
     my ($self, $url_or_request) = @_;
-    my $url = ref $url_or_request ? $url_or_request->uri->as_string : $url_or_request;
+    my $url = ref $url_or_request ? $url_or_request -> uri -> as_string : $url_or_request;
     
-    my $res = HTTP::Response->new;
+    my $response = HTTP::Response -> new;
 
     if ($url =~ m{/orgs/test-org/repos\?}xms) { 
-        $repo_list_page_count_sf++;
-        $res->code($HTTP_OK);
-        $res->message('OK');
-        $res->header('Content-Type' => 'application/json');
+        $repo_list_page_count_search_files++;
+        $response -> code($HTTP_OK);
+        $response -> message('OK');
+        $response -> header('Content-Type' => 'application/json');
 
-        if ($repo_list_page_count_sf == 1) {
-            $res->content(encode_json([
+        if ($repo_list_page_count_search_files == 1) {
+            $response -> content(encode_json([
                 {name => "repo1", archived => JSON::false}, 
                 {name => "repo2", archived => JSON::true}
             ]));
         } 
         
         else {
-            $res->content(encode_json([])); 
+            $response -> content(encode_json([])); 
         }
     }
     
     elsif ($url =~ m{/repos/test-org/repo1/contents/\.github/dependabot\.yml}xms) { 
-        $res->code($HTTP_NOT_FOUND);
-        $res->message('Not Found');
-        $res->header('Content-Type' => 'application/json'); 
-        $res->content(encode_json({message => "Not Found", documentation_url => "..."}));
+        $response -> code($HTTP_NOT_FOUND);
+        $response -> message('Not Found');
+        $response -> header('Content-Type' => 'application/json'); 
+        $response -> content(encode_json({message => "Not Found", documentation_url => "..."}));
     }
     
     else {
-        $res->code($HTTP_NOT_FOUND);
-        $res->message('Not Found (Mock)');
-        $res->content("URL not handled by mock: $url");
+        $response -> code($HTTP_NOT_FOUND);
+        $response -> message('Not Found (Mock)');
+        $response -> content("URL not handled by mock: $url");
         diag "Mock LWP::UserAgent received unhandled GET in SearchFiles.t: $url";
     }
     
-    return $res;
+    return $response;
 });
 
 subtest 'SearchFiles' => sub {
     plan tests => 4; 
 
-    $repo_list_page_count_sf = 0;
+    $repo_list_page_count_search_files = 0;
 
-    my $search_output = Sentra::Engine::SearchFiles->new('test-org', 'test-token', $PER_PAGE);
+    my $search_output = Sentra::Engine::SearchFiles -> new('test-org', 'test-token', $PER_PAGE);
 
-    my $expected_text_1 = qr{The\ }xms;
-    my $expected_text_2a = qr{\.github/dependabot\.yml}xms;
-    my $expected_text_2b = qr{file\ was\ not\ found\ in\ this\ repository:}xms;
-    my $expected_url_msg  = qr{https://github\.com/test-org/repo1}xms;
+    my $expected_prefix_text = qr{The\ }xms;
+    my $expected_path_text = qr{\.github/dependabot\.yml}xms;
+    my $expected_missing_text = qr{file\ was\ not\ found\ in\ this\ repository:}xms;
+    my $expected_url_text  = qr{https://github\.com/test-org/repo1}xms;
 
-    like($search_output, $expected_text_1, 'Dependabot file not found message (part 1)');
-    like($search_output, $expected_text_2a, 'Dependabot file not found message (file path)');
-    like($search_output, $expected_text_2b, 'Dependabot file not found message (not found text)');
-    like($search_output, $expected_url_msg,  'Dependabot file not found message (URL)');
+    like($search_output, $expected_prefix_text, 'Dependabot file not found message (part 1)');
+    like($search_output, $expected_path_text, 'Dependabot file not found message (file path)');
+    like($search_output, $expected_missing_text, 'Dependabot file not found message (not found text)');
+    like($search_output, $expected_url_text,  'Dependabot file not found message (URL)');
 };
 
 done_testing();

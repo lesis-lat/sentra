@@ -43,14 +43,14 @@ sub main {
 
     for my $option (keys %options) {
         if ($options{$option} && exists $dispatch_table{$option}) {
-            print $dispatch_table{$option}->();
+            print $dispatch_table{$option} -> ();
         }
     }
 
     if ($webhook && $message) {
-        my $send = Sentra::Engine::SlackWebhook -> new($message, $webhook);
+        my $send_result = Sentra::Engine::SlackWebhook -> new($message, $webhook);
 
-        if ($send) {
+        if ($send_result) {
             return 0;
         }
     }

@@ -13,11 +13,11 @@ package Sentra::Engine::DependabotMetrics {
     sub new {
         my (undef, $org, $token, $per_page) = @_;
 
-        my $userAgent = Sentra::Utils::UserAgent -> new($token);
-        my @repositories_list = Sentra::Utils::Repositories_List -> new($org, $token);
+        my $user_agent   = Sentra::Utils::UserAgent -> new($token);
+        my @repositories = Sentra::Utils::Repositories_List -> new($org, $token);
 
-        my $output            = q{};
-        my $total_alerts   = 0;
+        my $output       = q{};
+        my $total_alerts = 0;
         my %severity_count = (
             low      => 0,
             medium   => 0,
@@ -25,13 +25,13 @@ package Sentra::Engine::DependabotMetrics {
             critical => 0
         );
 
-        foreach my $repository (@repositories_list) {
-            my $alert_page = 1;
-            my $alert_url  = "https://api.github.com/repos/$repository/dependabot/alerts?state=open&per_page=$per_page&page=$alert_page";
-            my $request    = $userAgent -> get($alert_url);
+        foreach my $repository (@repositories) {
+            my $alert_page     = 1;
+            my $alert_url      = "https://api.github.com/repos/$repository/dependabot/alerts?state=open&per_page=$per_page&page=$alert_page";
+            my $alert_response = $user_agent -> get($alert_url);
 
-            if ($request -> code() == $HTTP_OK) {
-                my $alert_data = decode_json($request -> content());
+            if ($alert_response -> code() == $HTTP_OK) {
+                my $alert_data = decode_json($alert_response -> content());
 
                 if (scalar(@{$alert_data}) == 0) {
                     last;
@@ -40,7 +40,7 @@ package Sentra::Engine::DependabotMetrics {
                 $total_alerts += scalar(@{$alert_data});
 
                 foreach my $alert (@{$alert_data}) {
-                    my $severity = $alert->{security_vulnerability}{severity} || 'unknown';
+                    my $severity = $alert -> {security_vulnerability}{severity} || 'unknown';
 
                     if (exists $severity_count{$severity}) {
                         $severity_count{$severity}++;
@@ -49,8 +49,8 @@ package Sentra::Engine::DependabotMetrics {
             }
         }
 
-        foreach my $sev (keys %severity_count) {
-            $output .= "Severity $sev: $severity_count{$sev}\n";
+        foreach my $severity_label (keys %severity_count) {
+            $output .= "Severity $severity_label: $severity_count{$severity_label}\n";
         }
 
         $output .= "Total DependaBot Alerts: $total_alerts\n";

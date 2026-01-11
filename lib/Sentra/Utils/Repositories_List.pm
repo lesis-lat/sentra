@@ -12,22 +12,22 @@ package Sentra::Utils::Repositories_List {
     sub new {
         my (undef, $org, $token) = @_;
 
-        my @repos;
+        my @repositories;
         my $page = 1;
-        my $userAgent = Sentra::Utils::UserAgent -> new($token);
+        my $user_agent = Sentra::Utils::UserAgent -> new($token);
 
         while (1) {
             my $url      = "https://api.github.com/orgs/$org/repos?per_page=100&page=$page";
-            my $response = $userAgent -> get($url);
+            my $response = $user_agent -> get($url);
 
             if ($response -> code() == $HTTP_OK) {
                 my $data  = decode_json($response -> content());
 
                 last if scalar(@{$data}) == 0;
 
-                foreach my $repo (@{$data}) {
-                    if (!$repo->{archived}) {
-                        push @repos, "$org/$repo->{name}";
+                foreach my $repository (@{$data}) {
+                    if (!$repository -> {archived}) {
+                        push @repositories, $org . '/' . $repository -> {name};
                     }
                 }
 
@@ -35,7 +35,7 @@ package Sentra::Utils::Repositories_List {
             }
         }
 
-        return @repos;
+        return @repositories;
     }
 }
 
