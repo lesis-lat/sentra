@@ -9,7 +9,7 @@ use Test::More;
 use Test::MockModule;
 use HTTP::Response;
 use JSON;
-use Sentra::Engine::SecurityTools;
+use Sentra::Component::SecurityTools;
 
 use Readonly;
 Readonly my $HTTP_OK => 200;
@@ -38,31 +38,36 @@ $mock_lwp_user_agent -> mock('get', sub {
                 {name => "repo2", archived => JSON::true}
             ]));
         }
-        else {
+
+        if ($repo_list_page_count_security_tools != 1) {
             $response -> content(encode_json([]));
         }
+
+        return $response;
     }
 
-    elsif ($url =~ m{/repos/test-org/repo1/contents/\.gitleaks\.toml}xms) {
+    if ($url =~ m{/repos/test-org/repo1/contents/\.gitleaks\.toml}xms) {
         $response -> code($HTTP_OK);
         $response -> message('OK');
         $response -> header('Content-Type' => 'application/json');
         $response -> content(encode_json({name => '.gitleaks.toml'}));
+
+        return $response;
     }
 
-    elsif ($url =~ m{/repos/test-org/repo1/contents/\.github/workflows/codeql\.yml}xms) {
+    if ($url =~ m{/repos/test-org/repo1/contents/\.github/workflows/codeql\.yml}xms) {
         $response -> code($HTTP_OK);
         $response -> message('OK');
         $response -> header('Content-Type' => 'application/json');
         $response -> content(encode_json({name => 'codeql.yml'}));
+
+        return $response;
     }
 
-    else {
-        $response -> code($HTTP_NOT_FOUND);
-        $response -> message('Not Found (Mock)');
-        $response -> content("URL not handled by mock: $url");
-        diag "Mock LWP::UserAgent received unhandled GET in SecurityTools.t: $url";
-    }
+    $response -> code($HTTP_NOT_FOUND);
+    $response -> message('Not Found (Mock)');
+    $response -> content("URL not handled by mock: $url");
+    diag "Mock LWP::UserAgent received unhandled GET in SecurityTools.t: $url";
 
     return $response;
 });
@@ -72,7 +77,13 @@ subtest 'SecurityTools' => sub {
 
     $repo_list_page_count_security_tools = 0;
 
-    my $security_tools_output = Sentra::Engine::SecurityTools -> new('test-org', 'test-token', $PER_PAGE);
+    my %flow_message = (
+        org      => 'test-org',
+        token    => 'test-token',
+        per_page => $PER_PAGE
+    );
+
+    my $security_tools_output = Sentra::Component::SecurityTools -> new(\%flow_message);
 
     like(
         $security_tools_output,

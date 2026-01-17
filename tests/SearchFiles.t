@@ -7,9 +7,9 @@ use warnings;
 use lib "../lib/";
 use Test::More;
 use Test::MockModule;
-use HTTP::Response; 
-use JSON;     
-use Sentra::Engine::SearchFiles;      
+use HTTP::Response;
+use JSON;
+use Sentra::Component::SearchFiles;
 
 use Readonly;
 Readonly my $HTTP_OK => 200;
@@ -23,10 +23,10 @@ my $repo_list_page_count_search_files = 0;
 $mock_lwp_user_agent -> mock('get', sub {
     my ($self, $url_or_request) = @_;
     my $url = ref $url_or_request ? $url_or_request -> uri -> as_string : $url_or_request;
-    
+
     my $response = HTTP::Response -> new;
 
-    if ($url =~ m{/orgs/test-org/repos\?}xms) { 
+    if ($url =~ m{/orgs/test-org/repos\?}xms) {
         $repo_list_page_count_search_files++;
         $response -> code($HTTP_OK);
         $response -> message('OK');
@@ -34,39 +34,47 @@ $mock_lwp_user_agent -> mock('get', sub {
 
         if ($repo_list_page_count_search_files == 1) {
             $response -> content(encode_json([
-                {name => "repo1", archived => JSON::false}, 
+                {name => "repo1", archived => JSON::false},
                 {name => "repo2", archived => JSON::true}
             ]));
-        } 
-        
-        else {
-            $response -> content(encode_json([])); 
         }
+
+        if ($repo_list_page_count_search_files != 1) {
+            $response -> content(encode_json([]));
+        }
+
+        return $response;
     }
-    
-    elsif ($url =~ m{/repos/test-org/repo1/contents/\.github/dependabot\.yml}xms) { 
+
+    if ($url =~ m{/repos/test-org/repo1/contents/\.github/dependabot\.yml}xms) {
         $response -> code($HTTP_NOT_FOUND);
         $response -> message('Not Found');
-        $response -> header('Content-Type' => 'application/json'); 
+        $response -> header('Content-Type' => 'application/json');
         $response -> content(encode_json({message => "Not Found", documentation_url => "..."}));
+
+        return $response;
     }
-    
-    else {
-        $response -> code($HTTP_NOT_FOUND);
-        $response -> message('Not Found (Mock)');
-        $response -> content("URL not handled by mock: $url");
-        diag "Mock LWP::UserAgent received unhandled GET in SearchFiles.t: $url";
-    }
-    
+
+    $response -> code($HTTP_NOT_FOUND);
+    $response -> message('Not Found (Mock)');
+    $response -> content("URL not handled by mock: $url");
+    diag "Mock LWP::UserAgent received unhandled GET in SearchFiles.t: $url";
+
     return $response;
 });
 
 subtest 'SearchFiles' => sub {
-    plan tests => 4; 
+    plan tests => 4;
 
     $repo_list_page_count_search_files = 0;
 
-    my $search_output = Sentra::Engine::SearchFiles -> new('test-org', 'test-token', $PER_PAGE);
+    my %flow_message = (
+        org      => 'test-org',
+        token    => 'test-token',
+        per_page => $PER_PAGE
+    );
+
+    my $search_output = Sentra::Component::SearchFiles -> new(\%flow_message);
 
     my $expected_prefix_text = qr{The\ }xms;
     my $expected_path_text = qr{\.github/dependabot\.yml}xms;
