@@ -1,4 +1,4 @@
-package Sentra::Engine::SecurityTools {
+package Sentra::Component::SecurityTools {
     use strict;
     use warnings;
     use Sentra::Utils::Repositories_List;
@@ -10,11 +10,11 @@ package Sentra::Engine::SecurityTools {
     Readonly my $HTTP_OK => 200;
 
     sub new {
-        my (undef, $org, $token, $per_page) = @_;
+        my (undef, $message) = @_;
 
         my $output       = q{};
-        my $user_agent   = Sentra::Utils::UserAgent -> new($token);
-        my @repositories = Sentra::Utils::Repositories_List -> new($org, $token);
+        my $user_agent   = Sentra::Utils::UserAgent -> new($message -> {token});
+        my @repositories = Sentra::Utils::Repositories_List -> new($message -> {org}, $message -> {token});
 
         my %secret_scanning_tools = (
             'Detect Secrets' => [
@@ -86,21 +86,19 @@ package Sentra::Engine::SecurityTools {
                 }
             }
 
+            my $secret_summary = 'No secret scanning tools detected in https://github.com/' . $repository;
+            my $sast_summary   = 'No SAST tools detected in https://github.com/' . $repository;
+
             if (@secret_tools_found) {
-                $output .= 'Secret scanning tools detected in https://github.com/' . $repository . ': ';
-                $output .= join(', ', @secret_tools_found) . "\n";
-            }
-            else {
-                $output .= 'No secret scanning tools detected in https://github.com/' . $repository . "\n";
+                $secret_summary = 'Secret scanning tools detected in https://github.com/' . $repository . ': ' . join(', ', @secret_tools_found);
             }
 
             if (@sast_tools_found) {
-                $output .= 'SAST tools detected in https://github.com/' . $repository . ': ';
-                $output .= join(', ', @sast_tools_found) . "\n";
+                $sast_summary = 'SAST tools detected in https://github.com/' . $repository . ': ' . join(', ', @sast_tools_found);
             }
-            else {
-                $output .= 'No SAST tools detected in https://github.com/' . $repository . "\n";
-            }
+
+            $output .= $secret_summary . "\n";
+            $output .= $sast_summary . "\n";
         }
 
         return $output;

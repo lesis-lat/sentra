@@ -1,4 +1,4 @@
-package Sentra::Engine::DependabotMetrics {
+package Sentra::Component::DependabotMetrics {
     use strict;
     use warnings;
     use JSON;
@@ -11,12 +11,13 @@ package Sentra::Engine::DependabotMetrics {
     Readonly my $HTTP_OK => 200;
 
     sub new {
-        my (undef, $org, $token, $per_page) = @_;
+        my (undef, $message) = @_;
 
-        my $user_agent   = Sentra::Utils::UserAgent -> new($token);
-        my @repositories = Sentra::Utils::Repositories_List -> new($org, $token);
+        my $user_agent   = Sentra::Utils::UserAgent -> new($message -> {token});
+        my @repositories = Sentra::Utils::Repositories_List -> new($message -> {org}, $message -> {token});
 
         my $output       = q{};
+        my $per_page     = $message -> {per_page};
         my $total_alerts = 0;
         my %severity_count = (
             low      => 0,
