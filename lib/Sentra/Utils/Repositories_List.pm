@@ -23,7 +23,9 @@ package Sentra::Utils::Repositories_List {
             if ($response -> code() == $HTTP_OK) {
                 my $data  = decode_json($response -> content());
 
-                last if scalar(@{$data}) == 0;
+                if (scalar(@{$data}) == 0) {
+                    last;
+                }
 
                 foreach my $repository (@{$data}) {
                     if (!$repository -> {archived}) {

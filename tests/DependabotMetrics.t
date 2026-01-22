@@ -23,7 +23,11 @@ my $repo1_alert_fetch_count = 0;
 
 $mock_lwp_user_agent -> mock('get', sub {
     my ($self, $url_or_request) = @_;
-    my $url = ref $url_or_request ? $url_or_request -> uri -> as_string : $url_or_request;
+    my $url = $url_or_request;
+
+    if (ref $url_or_request) {
+        $url = $url_or_request -> uri -> as_string;
+    }
 
     my $response = HTTP::Response -> new;
 
