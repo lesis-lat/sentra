@@ -5,6 +5,8 @@ package Sentra::Utils::Helper {
     our $VERSION = '0.0.1';
 
     sub new {
+        my ($class) = @_;
+
         return join("\n",
             "Sentra v0.0.1",
             "Core Commands",

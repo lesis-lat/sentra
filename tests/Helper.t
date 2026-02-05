@@ -9,7 +9,7 @@ use Sentra::Utils::Helper;
 use Test::More;
 
 subtest 'Helper' => sub {
-    plan tests => 22;
+    plan tests => 21;
 
     my $helper_output = Sentra::Utils::Helper -> new();
 
@@ -24,8 +24,7 @@ subtest 'Helper' => sub {
     ok($helper_output =~ /-mt,\ --maintained/xms, 'Helper output contains maintained option');
     ok($helper_output =~ /-d,\ --dependency/xms, 'Helper output contains dependency option');
     ok($helper_output =~ /-M,\ --metrics/xms, 'Helper output contains metrics option');
-    ok($helper_output =~ /-ss,\ --secret-scanning/xms, 'Helper output contains secret scanning option');
-    ok($helper_output =~ /--sast/xms, 'Helper output contains sast option');
+    ok($helper_output =~ /--static-analysis/xms, 'Helper output contains static analysis option');
     ok($helper_output =~ /-w,\ --webhook/xms, 'Helper output contains webhook option');
     ok($helper_output =~ /-m,\ --message/xms, 'Helper output contains message option');
 
@@ -41,16 +40,15 @@ subtest 'Helper' => sub {
         '-o, --org',
         '-t, --token',
         '-mt, --maintained',
-        '-d, --dependency',  
+        '-d, --dependency',
         '-M, --metrics',
-        '-ss, --secret-scanning',
-        '--sast',
+        '--static-analysis',
         '-w, --webhook',
         '-m, --message'
     );
 
     my @missing_options;
-    
+
     for my $option (@expected_options) {
         if ($helper_output !~ m/\Q$option\E/xms) {
             push @missing_options, $option;

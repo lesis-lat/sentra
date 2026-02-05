@@ -17,7 +17,8 @@ package Sentra::Utils::Repositories_List {
         my $user_agent = Sentra::Utils::UserAgent -> new($token);
 
         while (1) {
-            my $url      = "https://api.github.com/orgs/$org/repos?per_page=100&page=$page";
+            my $url = "https://api.github.com/orgs/$org/repos?per_page=100"
+                . "&page=$page";
             my $response = $user_agent -> get($url);
 
             if ($response -> code() == $HTTP_OK) {
