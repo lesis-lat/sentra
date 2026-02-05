@@ -50,11 +50,16 @@ $mock_lwp_user_agent -> mock('get', sub {
         return $response;
     }
 
-    if ($url =~ m{/repos/test-org/repo1/contents/\.github/dependabot\.yml}xms) {
+    if ($url =~ m{
+        /repos/test-org/repo1/contents/\.github/dependabot\.yml
+    }xms) {
         $response -> code($HTTP_NOT_FOUND);
         $response -> message('Not Found');
         $response -> header('Content-Type' => 'application/json');
-        $response -> content(encode_json({message => "Not Found", documentation_url => "..."}));
+        $response -> content(encode_json({
+            message           => "Not Found",
+            documentation_url => "..."
+        }));
 
         return $response;
     }
@@ -62,7 +67,8 @@ $mock_lwp_user_agent -> mock('get', sub {
     $response -> code($HTTP_NOT_FOUND);
     $response -> message('Not Found (Mock)');
     $response -> content("URL not handled by mock: $url");
-    diag "Mock LWP::UserAgent received unhandled GET in SearchFiles.t: $url";
+    diag "Mock LWP::UserAgent received unhandled GET in SearchFiles.t: "
+        . $url;
 
     return $response;
 });
@@ -82,13 +88,30 @@ subtest 'SearchFiles' => sub {
 
     my $expected_prefix_text = qr{The\ }xms;
     my $expected_path_text = qr{\.github/dependabot\.yml}xms;
-    my $expected_missing_text = qr{file\ was\ not\ found\ in\ this\ repository:}xms;
+    my $expected_missing_text
+        = qr{file\ was\ not\ found\ in\ this\ repository:}xms;
     my $expected_url_text  = qr{https://github\.com/test-org/repo1}xms;
 
-    like($search_output, $expected_prefix_text, 'Dependabot file not found message (part 1)');
-    like($search_output, $expected_path_text, 'Dependabot file not found message (file path)');
-    like($search_output, $expected_missing_text, 'Dependabot file not found message (not found text)');
-    like($search_output, $expected_url_text,  'Dependabot file not found message (URL)');
+    like(
+        $search_output,
+        $expected_prefix_text,
+        'Dependabot file not found message (part 1)'
+    );
+    like(
+        $search_output,
+        $expected_path_text,
+        'Dependabot file not found message (file path)'
+    );
+    like(
+        $search_output,
+        $expected_missing_text,
+        'Dependabot file not found message (not found text)'
+    );
+    like(
+        $search_output,
+        $expected_url_text,
+        'Dependabot file not found message (URL)'
+    );
 };
 
 done_testing();

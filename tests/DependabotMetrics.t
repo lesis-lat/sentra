@@ -74,7 +74,8 @@ $mock_lwp_user_agent -> mock('get', sub {
     $response -> code($HTTP_NOT_FOUND);
     $response -> message('Not Found (Mock)');
     $response -> content("URL not handled by mock: $url");
-    diag "Mock LWP::UserAgent received unhandled GET: $url";
+    diag "Mock LWP::UserAgent received unhandled GET: "
+        . $url;
 
     return $response;
 });
@@ -91,11 +92,25 @@ subtest 'DependabotMetrics' => sub {
         per_page => $PER_PAGE
     );
 
-    my $metrics_output = Sentra::Component::DependabotMetrics -> new(\%flow_message);
+    my $metrics_output = Sentra::Component::DependabotMetrics -> new(
+        \%flow_message
+    );
 
-    like($metrics_output, qr/Severity\s+high:\s+1/xms, 'High severity alert counted');
-    like($metrics_output, qr/Severity\s+low:\s+1/xms, 'Low severity alert counted');
-    like($metrics_output, qr/Total\s+DependaBot\s+Alerts:\s+2/xms, 'Total alerts counted correctly');
+    like(
+        $metrics_output,
+        qr/Severity\s+high:\s+1/xms,
+        'High severity alert counted'
+    );
+    like(
+        $metrics_output,
+        qr/Severity\s+low:\s+1/xms,
+        'Low severity alert counted'
+    );
+    like(
+        $metrics_output,
+        qr/Total\s+DependaBot\s+Alerts:\s+2/xms,
+        'Total alerts counted correctly'
+    );
 };
 
 done_testing();

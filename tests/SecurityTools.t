@@ -59,7 +59,9 @@ $mock_lwp_user_agent -> mock('get', sub {
         return $response;
     }
 
-    if ($url =~ m{/repos/test-org/repo1/contents/\.github/workflows/codeql\.yml}xms) {
+    if ($url =~ m{
+        /repos/test-org/repo1/contents/\.github/workflows/codeql\.yml
+    }xms) {
         $response -> code($HTTP_OK);
         $response -> message('OK');
         $response -> header('Content-Type' => 'application/json');
@@ -71,7 +73,8 @@ $mock_lwp_user_agent -> mock('get', sub {
     $response -> code($HTTP_NOT_FOUND);
     $response -> message('Not Found (Mock)');
     $response -> content("URL not handled by mock: $url");
-    diag "Mock LWP::UserAgent received unhandled GET in SecurityTools.t: $url";
+    diag "Mock LWP::UserAgent received unhandled GET in SecurityTools.t: "
+        . $url;
 
     return $response;
 });
@@ -87,17 +90,29 @@ subtest 'SecurityTools' => sub {
         per_page => $PER_PAGE
     );
 
-    my $security_tools_output = Sentra::Component::SecurityTools -> new(\%flow_message);
+    my $security_tools_output = Sentra::Component::SecurityTools -> new(
+        \%flow_message
+    );
+
+    my $secret_scanning_detected_text = qr{
+        Secret\ scanning\ tools\ detected\ in\
+        https://github\.com/test-org/repo1:\ Gitleaks
+    }xms;
 
     like(
         $security_tools_output,
-        qr{Secret\ scanning\ tools\ detected\ in\ https://github\.com/test-org/repo1:\ Gitleaks}xms,
+        $secret_scanning_detected_text,
         'Secret scanning tools detection message includes Gitleaks'
     );
 
+    my $sast_detected_text = qr{
+        SAST\ tools\ detected\ in\
+        https://github\.com/test-org/repo1:\ CodeQL
+    }xms;
+
     like(
         $security_tools_output,
-        qr{SAST\ tools\ detected\ in\ https://github\.com/test-org/repo1:\ CodeQL}xms,
+        $sast_detected_text,
         'SAST tools detection message includes CodeQL'
     );
 

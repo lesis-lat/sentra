@@ -10,11 +10,13 @@ package Sentra::Component::SlackWebhook {
         my (undef, $message) = @_;
 
         my $user_agent = Mojo::UserAgent -> new();
-        my $payload    = encode_json({ text => $message -> {message} });
+        my $payload    = encode_json({text => $message -> {message}});
 
-        my $transaction = $user_agent -> post($message -> {webhook} => {
-            'Content-Type' => 'application/json'
-        } => $payload);
+        my $transaction = $user_agent -> post(
+            $message -> {webhook},
+            {'Content-Type' => 'application/json'},
+            $payload
+        );
 
         my $response = $transaction -> result;
 
@@ -26,14 +28,20 @@ package Sentra::Component::SlackWebhook {
                 $error_message = $error -> {message};
             }
 
-            return "Failed to send message: [" . $error_message . "]\n";
+            return "Failed to send message: ["
+                . $error_message
+                . "]\n";
         }
 
         if (!$response -> is_success) {
-            return "Failed to send message: [" . $response -> message . "]\n";
+            return "Failed to send message: ["
+                . $response -> message
+                . "]\n";
         }
 
-        return "Message sent successfully! [" . $response -> body . "]\n";
+        return "Message sent successfully! ["
+            . $response -> body
+            . "]\n";
     }
 }
 

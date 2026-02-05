@@ -11,14 +11,24 @@ package Sentra::Utils::Helper {
             "    ==============",
             "        Command                         Description",
             "        -------                         -----------",
-            "        -o, --org                       Specify the name of the organization",
-            "        -t, --token                     Set the GitHub Token to use during actions",
-            "        -mt, --maintained               Get alerts about repositories with a last commit date greater than 90 days old",
-            "        -d, --dependency                Check if repositories has dependabot.yaml file",
-            "        -M, --metrics                   See some metrics based on GHAS",
-            "        --static-analysis               Check repositories for security tools (SAST, secret scanning)",
-            "        -w, --webhook                   Set the webhook address for Slack",
-            "        -m, --message                   Message to send via Slack webhook"
+            "        -o, --org                       "
+                . "Specify the name of the organization",
+            "        -t, --token                     "
+                . "Set the GitHub Token to use during actions",
+            "        -mt, --maintained               "
+                . "Get alerts about repositories with a "
+                . "last commit date greater than 90 days old",
+            "        -d, --dependency                "
+                . "Check if repositories has dependabot.yaml file",
+            "        -M, --metrics                   "
+                . "See some metrics based on GHAS",
+            "        --static-analysis               "
+                . "Check repositories for security tools "
+                . "(SAST, secret scanning)",
+            "        -w, --webhook                   "
+                . "Set the webhook address for Slack",
+            "        -m, --message                   "
+                . "Message to send via Slack webhook"
         );
     }
 }

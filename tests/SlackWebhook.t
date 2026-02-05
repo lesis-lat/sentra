@@ -36,9 +36,15 @@ subtest 'SlackWebhook' => sub {
         webhook => 'https://hooks.slack.com/services/xxx/yyy/zzz'
     );
 
-    my $result_message = Sentra::Component::SlackWebhook -> new(\%slack_message);
+    my $result_message = Sentra::Component::SlackWebhook -> new(
+        \%slack_message
+    );
 
-    like($result_message, qr/Message\ sent\ successfully! \s \[ok\]/xms, 'Webhook message sent successfully');
+    like(
+        $result_message,
+        qr/Message\ sent\ successfully! \s \[ok\]/xms,
+        'Webhook message sent successfully'
+    );
 };
 
 done_testing();

@@ -12,9 +12,14 @@ package Sentra::Component::SecurityTools {
     sub new {
         my (undef, $message) = @_;
 
-        my $output       = q{};
-        my $user_agent   = Sentra::Utils::UserAgent -> new($message -> {token});
-        my @repositories = Sentra::Utils::Repositories_List -> new($message -> {org}, $message -> {token});
+        my $output     = q{};
+        my $user_agent = Sentra::Utils::UserAgent -> new(
+            $message -> {token}
+        );
+        my @repositories = Sentra::Utils::Repositories_List -> new(
+            $message -> {org},
+            $message -> {token}
+        );
 
         my %secret_scanning_tools = (
             'Detect Secrets' => [
@@ -64,7 +69,9 @@ package Sentra::Component::SecurityTools {
 
             for my $tool (sort keys %secret_scanning_tools) {
                 for my $file (@{$secret_scanning_tools{$tool}}) {
-                    my $tool_url = "https://api.github.com/repos/$repository/contents/$file";
+                    my $tool_url
+                        = "https://api.github.com/repos/$repository"
+                        . "/contents/$file";
                     my $response = $user_agent -> get($tool_url);
 
                     if ($response -> code() == $HTTP_OK) {
@@ -76,7 +83,9 @@ package Sentra::Component::SecurityTools {
 
             for my $tool (sort keys %sast_tools) {
                 for my $file (@{$sast_tools{$tool}}) {
-                    my $tool_url = "https://api.github.com/repos/$repository/contents/$file";
+                    my $tool_url
+                        = "https://api.github.com/repos/$repository"
+                        . "/contents/$file";
                     my $response = $user_agent -> get($tool_url);
 
                     if ($response -> code() == $HTTP_OK) {
@@ -86,15 +95,31 @@ package Sentra::Component::SecurityTools {
                 }
             }
 
-            my $secret_summary = 'No secret scanning tools detected in https://github.com/' . $repository;
-            my $sast_summary   = 'No SAST tools detected in https://github.com/' . $repository;
+            my $secret_summary
+                = 'No secret scanning tools detected in '
+                . 'https://github.com/'
+                . $repository;
+            my $sast_summary
+                = 'No SAST tools detected in '
+                . 'https://github.com/'
+                . $repository;
 
             if (@secret_tools_found) {
-                $secret_summary = 'Secret scanning tools detected in https://github.com/' . $repository . ': ' . join(', ', @secret_tools_found);
+                $secret_summary
+                    = 'Secret scanning tools detected in '
+                    . 'https://github.com/'
+                    . $repository
+                    . ': '
+                    . join(', ', @secret_tools_found);
             }
 
             if (@sast_tools_found) {
-                $sast_summary = 'SAST tools detected in https://github.com/' . $repository . ': ' . join(', ', @sast_tools_found);
+                $sast_summary
+                    = 'SAST tools detected in '
+                    . 'https://github.com/'
+                    . $repository
+                    . ': '
+                    . join(', ', @sast_tools_found);
             }
 
             $output .= $secret_summary . "\n";
