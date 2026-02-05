@@ -17,7 +17,7 @@ package Sentra::Utils::UserAgent {
             agent => "Sentra 0.0.3"
         );
 
-        $user_agent -> default_headers -> header (
+        $user_agent -> default_headers -> header(
             'X-GitHub-Api-Version' => '2022-11-28',
             'Accept'               => 'application/vnd.github+json',
             'Authorization'        => "Bearer $token"

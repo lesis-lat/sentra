@@ -14,7 +14,10 @@ package Sentra::Component::DependabotMetrics {
         my (undef, $message) = @_;
 
         my $user_agent   = Sentra::Utils::UserAgent -> new($message -> {token});
-        my @repositories = Sentra::Utils::Repositories_List -> new($message -> {org}, $message -> {token});
+        my @repositories = Sentra::Utils::Repositories_List -> new(
+            $message -> {org},
+            $message -> {token}
+        );
 
         my $output       = q{};
         my $per_page     = $message -> {per_page};
@@ -27,8 +30,12 @@ package Sentra::Component::DependabotMetrics {
         );
 
         foreach my $repository (@repositories) {
-            my $alert_page     = 1;
-            my $alert_url      = "https://api.github.com/repos/$repository/dependabot/alerts?state=open&per_page=$per_page&page=$alert_page";
+            my $alert_page = 1;
+            my $alert_url = 'https://api.github.com/repos/'
+                . $repository
+                . '/dependabot/alerts?state=open&per_page='
+                . $per_page
+                . "&page=$alert_page";
             my $alert_response = $user_agent -> get($alert_url);
 
             if ($alert_response -> code() == $HTTP_OK) {

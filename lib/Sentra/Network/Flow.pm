@@ -20,7 +20,7 @@ package Sentra::Network::Flow {
 
         my $per_page = $PER_PAGE;
 
-        GetOptions (
+        GetOptions(
             'o|org=s'          => \$org,
             't|token=s'        => \$token,
             'w|webhook=s'      => \$webhook,
@@ -39,10 +39,10 @@ package Sentra::Network::Flow {
         );
 
         my %dispatch_table = (
-            'metrics'        => sub { Sentra::Component::DependabotMetrics -> new(\%flow_message) },
-            'dependency'     => sub { Sentra::Component::SearchFiles -> new(\%flow_message) },
-            'maintained'     => sub { Sentra::Component::Maintained -> new(\%flow_message) },
-            'security_tools' => sub { Sentra::Component::SecurityTools -> new(\%flow_message) },
+            'metrics'        => sub {Sentra::Component::DependabotMetrics -> new(\%flow_message)},
+            'dependency'     => sub {Sentra::Component::SearchFiles -> new(\%flow_message)},
+            'maintained'     => sub {Sentra::Component::Maintained -> new(\%flow_message)},
+            'security_tools' => sub {Sentra::Component::SecurityTools -> new(\%flow_message)},
         );
 
         for my $option (keys %options) {
