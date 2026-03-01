@@ -8,5 +8,5 @@ requires "DateTime",                    "1.66";
 on 'test' => sub {
 requires "Test::More", "1.302219";
 requires "Test::MockModule",            "0.180.0";
-    requires "Mojo::Transaction::HTTP", "9.41";
+    requires "Mojo::Transaction::HTTP", "9.42";
 };
