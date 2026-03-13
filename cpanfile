@@ -2,7 +2,7 @@ requires "Getopt::Long",                "2.58";
 requires "Mojo::UserAgent", "9.42";
 requires "LWP::UserAgent", "6.81";
 requires "JSON",                        "4.10";
-requires "DateTime::Format::ISO8601",   "0.17";
+requires "DateTime::Format::ISO8601", "0.19";
 requires "DateTime",                    "1.66";
 
 on 'test' => sub {
