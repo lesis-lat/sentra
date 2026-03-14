@@ -16,7 +16,8 @@ package Sentra::Component::SearchFiles {
         my $user_agent   = Sentra::Utils::UserAgent -> new($message -> {token});
         my @repositories = Sentra::Utils::Repositories_List -> new(
             $message -> {org},
-            $message -> {token}
+            $message -> {token},
+            $message -> {repo}
         );
         my @files        = qw(.github/dependabot.yml);
 

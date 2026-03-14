@@ -6,6 +6,6 @@ use warnings;
 use lib './lib/';
 use Sentra::Network::Flow;
 
-our $VERSION = '0.0.1';
+our $VERSION = '0.0.2';
 
 exit Sentra::Network::Flow -> new();

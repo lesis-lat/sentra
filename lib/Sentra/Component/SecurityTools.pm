@@ -1,6 +1,7 @@
 package Sentra::Component::SecurityTools {
     use strict;
     use warnings;
+    use JSON;
     use Sentra::Utils::Repositories_List;
     use Sentra::Utils::UserAgent;
     use Readonly;
@@ -16,7 +17,8 @@ package Sentra::Component::SecurityTools {
         my $user_agent   = Sentra::Utils::UserAgent -> new($message -> {token});
         my @repositories = Sentra::Utils::Repositories_List -> new(
             $message -> {org},
-            $message -> {token}
+            $message -> {token},
+            $message -> {repo}
         );
 
         my %secret_scanning_tools = (
@@ -62,6 +64,44 @@ package Sentra::Component::SecurityTools {
         );
 
         foreach my $repository (@repositories) {
+            my $languages = _fetch_languages($user_agent, $repository);
+            my $repository_url = 'https://github.com/' . $repository;
+
+            if ($languages && exists $languages -> {Perl}) {
+                my ($bunkai_found, $bunkai_file) = _find_first_matching_file(
+                    $user_agent,
+                    $repository,
+                    [qw(.bunkai.yml .bunkai.yaml)]
+                );
+                my ($zarn_found, $zarn_file) = _find_first_matching_file(
+                    $user_agent,
+                    $repository,
+                    [
+                        qw(
+                            .zarn.yml
+                            .zarn.yaml
+                            .github/workflows/zarn.yml
+                            .github/workflows/zarn.yaml
+                        )
+                    ]
+                );
+
+                my $sca_summary = "Perl SCA tool check (Bunkai) in $repository_url: missing";
+                my $sast_summary = "Perl SAST tool check (ZARN) in $repository_url: missing";
+
+                if ($bunkai_found) {
+                    $sca_summary = "Perl SCA tool check (Bunkai) in $repository_url: found ($bunkai_file)";
+                }
+
+                if ($zarn_found) {
+                    $sast_summary = "Perl SAST tool check (ZARN) in $repository_url: found ($zarn_file)";
+                }
+
+                $output .= $sca_summary . "\n";
+                $output .= $sast_summary . "\n";
+                next;
+            }
+
             my @secret_tools_found;
             my @sast_tools_found;
 
@@ -89,7 +129,6 @@ package Sentra::Component::SecurityTools {
                 }
             }
 
-            my $repository_url = 'https://github.com/' . $repository;
             my $secret_summary = 'No secret scanning tools detected in '
                 . $repository_url;
             my $sast_summary = 'No SAST tools detected in '
@@ -112,6 +151,33 @@ package Sentra::Component::SecurityTools {
         }
 
         return $output;
+    }
+
+    sub _fetch_languages {
+        my ($user_agent, $repository) = @_;
+        my $languages_url = "https://api.github.com/repos/$repository/languages";
+        my $languages_response = $user_agent -> get($languages_url);
+
+        if ($languages_response -> code() != $HTTP_OK) {
+            return undef;
+        }
+
+        return decode_json($languages_response -> content());
+    }
+
+    sub _find_first_matching_file {
+        my ($user_agent, $repository, $files) = @_;
+
+        foreach my $file (@{$files}) {
+            my $tool_url = "https://api.github.com/repos/$repository/contents/$file";
+            my $response = $user_agent -> get($tool_url);
+
+            if ($response -> code() == $HTTP_OK) {
+                return (1, $file);
+            }
+        }
+
+        return (0, q{});
     }
 }
 

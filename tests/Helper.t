@@ -9,21 +9,25 @@ use Sentra::Utils::Helper;
 use Test::More;
 
 subtest 'Helper' => sub {
-    plan tests => 21;
+    plan tests => 25;
 
     my $helper_output = Sentra::Utils::Helper -> new();
 
     ok(defined $helper_output, 'Helper output is defined');
     is(ref $helper_output, q{}, 'Helper output is a string');
 
-    like($helper_output, qr/Sentra\ v0\.0\.1/xms, 'Helper output contains version information');
+    like($helper_output, qr/Sentra\ v\d+\.\d+\.\d+/xms, 'Helper output contains version information');
     like($helper_output, qr/Core\ Commands/xms, 'Helper output contains core commands');
 
     ok($helper_output =~ /-o,\ --org/xms, 'Helper output contains org option');
+    ok($helper_output =~ /-r,\ --repo/xms, 'Helper output contains repo option');
     ok($helper_output =~ /-t,\ --token/xms, 'Helper output contains token option');
     ok($helper_output =~ /-mt,\ --maintained/xms, 'Helper output contains maintained option');
     ok($helper_output =~ /-d,\ --dependency/xms, 'Helper output contains dependency option');
     ok($helper_output =~ /-M,\ --metrics/xms, 'Helper output contains metrics option');
+    ok($helper_output =~ /--metrics-dependabot/xms, 'Helper output contains metrics dependabot option');
+    ok($helper_output =~ /--metrics-secret/xms, 'Helper output contains metrics secret option');
+    ok($helper_output =~ /--metrics-code/xms, 'Helper output contains metrics code option');
     ok($helper_output =~ /--static-analysis/xms, 'Helper output contains static analysis option');
     ok($helper_output =~ /-w,\ --webhook/xms, 'Helper output contains webhook option');
     ok($helper_output =~ /-m,\ --message/xms, 'Helper output contains message option');
@@ -38,10 +42,14 @@ subtest 'Helper' => sub {
 
     my @expected_options = (
         '-o, --org',
+        '-r, --repo',
         '-t, --token',
         '-mt, --maintained',
         '-d, --dependency',
         '-M, --metrics',
+        '--metrics-dependabot',
+        '--metrics-secret',
+        '--metrics-code',
         '--static-analysis',
         '-w, --webhook',
         '-m, --message'
