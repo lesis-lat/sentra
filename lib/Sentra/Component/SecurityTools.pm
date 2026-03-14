@@ -68,12 +68,17 @@ package Sentra::Component::SecurityTools {
             my $repository_url = 'https://github.com/' . $repository;
 
             if ($languages && exists $languages -> {Perl}) {
-                my ($bunkai_found, $bunkai_file) = _find_first_matching_file(
+                my ($bunkai_found) = _find_first_matching_file(
                     $user_agent,
                     $repository,
-                    [qw(.bunkai.yml .bunkai.yaml)]
+                    [
+                        qw(
+                            .github/workflows/bunkai.yml
+                            .github/workflows/bunkai.yaml
+                        )
+                    ]
                 );
-                my ($zarn_found, $zarn_file) = _find_first_matching_file(
+                my ($zarn_found) = _find_first_matching_file(
                     $user_agent,
                     $repository,
                     [
@@ -86,19 +91,13 @@ package Sentra::Component::SecurityTools {
                     ]
                 );
 
-                my $sca_summary = "Perl SCA tool check (Bunkai) in $repository_url: missing";
-                my $sast_summary = "Perl SAST tool check (ZARN) in $repository_url: missing";
-
-                if ($bunkai_found) {
-                    $sca_summary = "Perl SCA tool check (Bunkai) in $repository_url: found ($bunkai_file)";
+                if (!$bunkai_found) {
+                    $output .= "Perl SCA tool check (Bunkai) in $repository_url: missing\n";
                 }
 
-                if ($zarn_found) {
-                    $sast_summary = "Perl SAST tool check (ZARN) in $repository_url: found ($zarn_file)";
+                if (!$zarn_found) {
+                    $output .= "Perl SAST tool check (ZARN) in $repository_url: missing\n";
                 }
-
-                $output .= $sca_summary . "\n";
-                $output .= $sast_summary . "\n";
                 next;
             }
 
@@ -129,25 +128,15 @@ package Sentra::Component::SecurityTools {
                 }
             }
 
-            my $secret_summary = 'No secret scanning tools detected in '
-                . $repository_url;
-            my $sast_summary = 'No SAST tools detected in '
-                . $repository_url;
-
-            if (@secret_tools_found) {
-                $secret_summary = 'Secret scanning tools detected in '
-                    . $repository_url . ': '
-                    . join(', ', @secret_tools_found);
+            if (!@secret_tools_found) {
+                $output .= 'No secret scanning tools detected in '
+                    . $repository_url . "\n";
             }
 
-            if (@sast_tools_found) {
-                $sast_summary = 'SAST tools detected in '
-                    . $repository_url . ': '
-                    . join(', ', @sast_tools_found);
+            if (!@sast_tools_found) {
+                $output .= 'No SAST tools detected in '
+                    . $repository_url . "\n";
             }
-
-            $output .= $secret_summary . "\n";
-            $output .= $sast_summary . "\n";
         }
 
         return $output;

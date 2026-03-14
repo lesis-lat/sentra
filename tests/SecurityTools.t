@@ -20,6 +20,7 @@ my $mock_lwp_user_agent = Test::MockModule -> new('LWP::UserAgent');
 
 my $repo_list_page_count_security_tools = 0;
 my $repo_list_page_count_security_tools_perl = 0;
+my $repo_list_page_count_security_tools_perl_missing = 0;
 
 $mock_lwp_user_agent -> mock('get', sub {
     my ($self, $url_or_request) = @_;
@@ -70,6 +71,25 @@ $mock_lwp_user_agent -> mock('get', sub {
         return $response;
     }
 
+    if ($url =~ m{/orgs/test-org-perl-missing/repos\?}xms) {
+        $repo_list_page_count_security_tools_perl_missing++;
+        $response -> code($HTTP_OK);
+        $response -> message('OK');
+        $response -> header('Content-Type' => 'application/json');
+
+        if ($repo_list_page_count_security_tools_perl_missing == 1) {
+            $response -> content(encode_json([
+                {name => "repo-perl-missing", archived => JSON::false}
+            ]));
+        }
+
+        if ($repo_list_page_count_security_tools_perl_missing != 1) {
+            $response -> content(encode_json([]));
+        }
+
+        return $response;
+    }
+
     if ($url =~ m{/repos/test-org/repo1/languages}xms) {
         $response -> code($HTTP_NOT_FOUND);
         $response -> message('Not Found');
@@ -88,6 +108,15 @@ $mock_lwp_user_agent -> mock('get', sub {
         return $response;
     }
 
+    if ($url =~ m{/repos/test-org-perl-missing/repo-perl-missing/languages}xms) {
+        $response -> code($HTTP_OK);
+        $response -> message('OK');
+        $response -> header('Content-Type' => 'application/json');
+        $response -> content(encode_json({Perl => 999}));
+
+        return $response;
+    }
+
     if ($url =~ m{/repos/test-org/repo1/contents/\.gitleaks\.toml}xms) {
         $response -> code($HTTP_OK);
         $response -> message('OK');
@@ -98,10 +127,28 @@ $mock_lwp_user_agent -> mock('get', sub {
     }
 
     if ($url =~ m{/repos/test-org-perl/repo-perl/contents/\.bunkai\.yml}xms) {
+        $response -> code($HTTP_NOT_FOUND);
+        $response -> message('Not Found');
+        $response -> header('Content-Type' => 'application/json');
+        $response -> content(encode_json({message => "Not Found"}));
+
+        return $response;
+    }
+
+    if ($url =~ m{/repos/test-org-perl/repo-perl/contents/\.bunkai\.yaml}xms) {
+        $response -> code($HTTP_NOT_FOUND);
+        $response -> message('Not Found');
+        $response -> header('Content-Type' => 'application/json');
+        $response -> content(encode_json({message => "Not Found"}));
+
+        return $response;
+    }
+
+    if ($url =~ m{/repos/test-org-perl/repo-perl/contents/\.github/workflows/bunkai\.yml}xms) {
         $response -> code($HTTP_OK);
         $response -> message('OK');
         $response -> header('Content-Type' => 'application/json');
-        $response -> content(encode_json({name => '.bunkai.yml'}));
+        $response -> content(encode_json({name => 'bunkai.yml'}));
 
         return $response;
     }
@@ -133,6 +180,78 @@ $mock_lwp_user_agent -> mock('get', sub {
         return $response;
     }
 
+    if ($url =~ m{/repos/test-org-perl-missing/repo-perl-missing/contents/\.bunkai\.yml}xms) {
+        $response -> code($HTTP_NOT_FOUND);
+        $response -> message('Not Found');
+        $response -> header('Content-Type' => 'application/json');
+        $response -> content(encode_json({message => "Not Found"}));
+
+        return $response;
+    }
+
+    if ($url =~ m{/repos/test-org-perl-missing/repo-perl-missing/contents/\.bunkai\.yaml}xms) {
+        $response -> code($HTTP_NOT_FOUND);
+        $response -> message('Not Found');
+        $response -> header('Content-Type' => 'application/json');
+        $response -> content(encode_json({message => "Not Found"}));
+
+        return $response;
+    }
+
+    if ($url =~ m{/repos/test-org-perl-missing/repo-perl-missing/contents/\.github/workflows/bunkai\.yml}xms) {
+        $response -> code($HTTP_NOT_FOUND);
+        $response -> message('Not Found');
+        $response -> header('Content-Type' => 'application/json');
+        $response -> content(encode_json({message => "Not Found"}));
+
+        return $response;
+    }
+
+    if ($url =~ m{/repos/test-org-perl-missing/repo-perl-missing/contents/\.github/workflows/bunkai\.yaml}xms) {
+        $response -> code($HTTP_NOT_FOUND);
+        $response -> message('Not Found');
+        $response -> header('Content-Type' => 'application/json');
+        $response -> content(encode_json({message => "Not Found"}));
+
+        return $response;
+    }
+
+    if ($url =~ m{/repos/test-org-perl-missing/repo-perl-missing/contents/\.zarn\.yml}xms) {
+        $response -> code($HTTP_NOT_FOUND);
+        $response -> message('Not Found');
+        $response -> header('Content-Type' => 'application/json');
+        $response -> content(encode_json({message => "Not Found"}));
+
+        return $response;
+    }
+
+    if ($url =~ m{/repos/test-org-perl-missing/repo-perl-missing/contents/\.zarn\.yaml}xms) {
+        $response -> code($HTTP_NOT_FOUND);
+        $response -> message('Not Found');
+        $response -> header('Content-Type' => 'application/json');
+        $response -> content(encode_json({message => "Not Found"}));
+
+        return $response;
+    }
+
+    if ($url =~ m{/repos/test-org-perl-missing/repo-perl-missing/contents/\.github/workflows/zarn\.yml}xms) {
+        $response -> code($HTTP_NOT_FOUND);
+        $response -> message('Not Found');
+        $response -> header('Content-Type' => 'application/json');
+        $response -> content(encode_json({message => "Not Found"}));
+
+        return $response;
+    }
+
+    if ($url =~ m{/repos/test-org-perl-missing/repo-perl-missing/contents/\.github/workflows/zarn\.yaml}xms) {
+        $response -> code($HTTP_NOT_FOUND);
+        $response -> message('Not Found');
+        $response -> header('Content-Type' => 'application/json');
+        $response -> content(encode_json({message => "Not Found"}));
+
+        return $response;
+    }
+
     if ($url =~ m{/repos/test-org/repo1/contents/\.github/workflows/codeql\.yml}xms) {
         $response -> code($HTTP_OK);
         $response -> message('OK');
@@ -151,7 +270,7 @@ $mock_lwp_user_agent -> mock('get', sub {
 });
 
 subtest 'SecurityTools' => sub {
-    plan tests => 4;
+    plan tests => 1;
 
     $repo_list_page_count_security_tools = 0;
 
@@ -163,33 +282,11 @@ subtest 'SecurityTools' => sub {
 
     my $security_tools_output = Sentra::Component::SecurityTools -> new(\%flow_message);
 
-    like(
-        $security_tools_output,
-        qr{Secret\ scanning\ tools\ detected\ in\ https://github\.com/test-org/repo1:\ Gitleaks}xms,
-        'Secret scanning tools detection message includes Gitleaks'
-    );
-
-    like(
-        $security_tools_output,
-        qr{SAST\ tools\ detected\ in\ https://github\.com/test-org/repo1:\ CodeQL}xms,
-        'SAST tools detection message includes CodeQL'
-    );
-
-    unlike(
-        $security_tools_output,
-        qr{No\ secret\ scanning\ tools\ detected}xms,
-        'Secret scanning tools detection did not report missing tools'
-    );
-
-    unlike(
-        $security_tools_output,
-        qr{No\ SAST\ tools\ detected}xms,
-        'SAST tools detection did not report missing tools'
-    );
+    is($security_tools_output, q{}, 'No output when generic checks are compliant');
 };
 
 subtest 'SecurityTools with Perl-specific checks' => sub {
-    plan tests => 4;
+    plan tests => 1;
 
     $repo_list_page_count_security_tools_perl = 0;
 
@@ -201,28 +298,32 @@ subtest 'SecurityTools with Perl-specific checks' => sub {
 
     my $security_tools_output = Sentra::Component::SecurityTools -> new(\%flow_message);
 
-    like(
-        $security_tools_output,
-        qr{Perl\ SCA\ tool\ check\ \(Bunkai\)\ in\ https://github\.com/test-org-perl/repo-perl:\ found}xms,
-        'Perl SCA check reports Bunkai'
+    is($security_tools_output, q{}, 'No output when Perl-specific checks are compliant');
+};
+
+subtest 'SecurityTools with missing Perl controls' => sub {
+    plan tests => 2;
+
+    $repo_list_page_count_security_tools_perl_missing = 0;
+
+    my %flow_message = (
+        org      => 'test-org-perl-missing',
+        token    => 'test-token',
+        per_page => $PER_PAGE
     );
+
+    my $security_tools_output = Sentra::Component::SecurityTools -> new(\%flow_message);
 
     like(
         $security_tools_output,
-        qr{Perl\ SAST\ tool\ check\ \(ZARN\)\ in\ https://github\.com/test-org-perl/repo-perl:\ found}xms,
-        'Perl SAST check reports ZARN'
+        qr{Perl\ SCA\ tool\ check\ \(Bunkai\)\ in\ https://github\.com/test-org-perl-missing/repo-perl-missing:\ missing}xms,
+        'Perl SCA missing is reported'
     );
 
-    unlike(
+    like(
         $security_tools_output,
-        qr{Secret\ scanning\ tools\ detected\ in}xms,
-        'Perl-specific path does not run generic secret scan output'
-    );
-
-    unlike(
-        $security_tools_output,
-        qr{SAST\ tools\ detected\ in}xms,
-        'Perl-specific path does not run generic SAST scan output'
+        qr{Perl\ SAST\ tool\ check\ \(ZARN\)\ in\ https://github\.com/test-org-perl-missing/repo-perl-missing:\ missing}xms,
+        'Perl SAST missing is reported'
     );
 };
 
