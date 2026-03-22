@@ -8,4 +8,4 @@ use Sentra::Network::Flow;
 
 our $VERSION = '0.0.2';
 
-exit Sentra::Network::Flow -> new();
+exit Sentra::Network::Flow->new();

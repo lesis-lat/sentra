@@ -10,26 +10,26 @@ package Sentra::Component::SearchFiles {
     Readonly my $HTTP_NOT_FOUND => 404;
 
     sub new {
-        my (undef, $message) = @_;
+        my ( undef, $message ) = @_;
 
-        my $output       = q{};
-        my $user_agent   = Sentra::Utils::UserAgent -> new($message -> {token});
-        my @repositories = Sentra::Utils::Repositories_List -> new(
-            $message -> {org},
-            $message -> {token},
-            $message -> {repo}
-        );
-        my @files        = qw(.github/dependabot.yml);
+        my $output     = q{};
+        my $user_agent = Sentra::Utils::UserAgent->new( $message->{token} );
+        my @repositories =
+          Sentra::Utils::Repositories_List->new( $message->{org},
+            $message->{token}, $message->{repo} );
+        my @files = qw(.github/dependabot.yml);
 
         foreach my $repository (@repositories) {
             foreach my $file (@files) {
-                my $dependabot_url = "https://api.github.com/repos/"
-                    . $repository . "/contents/$file";
-                my $response       = $user_agent -> get($dependabot_url);
+                my $dependabot_url =
+                    q{https://api.github.com/repos/}
+                  . $repository
+                  . "/contents/$file";
+                my $response = $user_agent->get($dependabot_url);
 
-                if ($response -> code == $HTTP_NOT_FOUND) {
+                if ( $response->code == $HTTP_NOT_FOUND ) {
                     $output .= "The $file file was not found in this "
-                        . "repository: https://github.com/$repository\n";
+                      . "repository: https://github.com/$repository\n";
                 }
             }
         }
