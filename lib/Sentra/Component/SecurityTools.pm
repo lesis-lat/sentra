@@ -66,6 +66,37 @@ package Sentra::Component::SecurityTools {
         foreach my $repository (@repositories) {
             my $languages = _fetch_languages($user_agent, $repository);
             my $repository_url = 'https://github.com/' . $repository;
+            my @secret_tools_found;
+            my @sast_tools_found;
+
+            for my $tool (sort keys %secret_scanning_tools) {
+                for my $file (@{$secret_scanning_tools{$tool}}) {
+                    my $tool_url = "https://api.github.com/repos/$repository/contents/$file";
+                    my $response = $user_agent -> get($tool_url);
+
+                    if ($response -> code() == $HTTP_OK) {
+                        push @secret_tools_found, $tool;
+                        last;
+                    }
+                }
+            }
+
+            for my $tool (sort keys %sast_tools) {
+                for my $file (@{$sast_tools{$tool}}) {
+                    my $tool_url = "https://api.github.com/repos/$repository/contents/$file";
+                    my $response = $user_agent -> get($tool_url);
+
+                    if ($response -> code() == $HTTP_OK) {
+                        push @sast_tools_found, $tool;
+                        last;
+                    }
+                }
+            }
+
+            if (!@secret_tools_found) {
+                $output .= 'No secret scanning tools detected in '
+                    . $repository_url . "\n";
+            }
 
             if ($languages && exists $languages -> {Perl}) {
                 my ($bunkai_found) = _find_first_matching_file(
@@ -99,38 +130,6 @@ package Sentra::Component::SecurityTools {
                     $output .= "Perl SAST tool check (ZARN) in $repository_url: missing\n";
                 }
                 next;
-            }
-
-            my @secret_tools_found;
-            my @sast_tools_found;
-
-            for my $tool (sort keys %secret_scanning_tools) {
-                for my $file (@{$secret_scanning_tools{$tool}}) {
-                    my $tool_url = "https://api.github.com/repos/$repository/contents/$file";
-                    my $response = $user_agent -> get($tool_url);
-
-                    if ($response -> code() == $HTTP_OK) {
-                        push @secret_tools_found, $tool;
-                        last;
-                    }
-                }
-            }
-
-            for my $tool (sort keys %sast_tools) {
-                for my $file (@{$sast_tools{$tool}}) {
-                    my $tool_url = "https://api.github.com/repos/$repository/contents/$file";
-                    my $response = $user_agent -> get($tool_url);
-
-                    if ($response -> code() == $HTTP_OK) {
-                        push @sast_tools_found, $tool;
-                        last;
-                    }
-                }
-            }
-
-            if (!@secret_tools_found) {
-                $output .= 'No secret scanning tools detected in '
-                    . $repository_url . "\n";
             }
 
             if (!@sast_tools_found) {

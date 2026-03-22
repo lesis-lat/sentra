@@ -108,6 +108,15 @@ $mock_lwp_user_agent -> mock('get', sub {
         return $response;
     }
 
+    if ($url =~ m{/repos/test-org-perl/repo-perl/contents/\.gitleaks\.toml}xms) {
+        $response -> code($HTTP_OK);
+        $response -> message('OK');
+        $response -> header('Content-Type' => 'application/json');
+        $response -> content(encode_json({name => '.gitleaks.toml'}));
+
+        return $response;
+    }
+
     if ($url =~ m{/repos/test-org-perl-missing/repo-perl-missing/languages}xms) {
         $response -> code($HTTP_OK);
         $response -> message('OK');
@@ -302,7 +311,7 @@ subtest 'SecurityTools with Perl-specific checks' => sub {
 };
 
 subtest 'SecurityTools with missing Perl controls' => sub {
-    plan tests => 2;
+    plan tests => 3;
 
     $repo_list_page_count_security_tools_perl_missing = 0;
 
@@ -313,6 +322,12 @@ subtest 'SecurityTools with missing Perl controls' => sub {
     );
 
     my $security_tools_output = Sentra::Component::SecurityTools -> new(\%flow_message);
+
+    like(
+        $security_tools_output,
+        qr{No\ secret\ scanning\ tools\ detected\ in\ https://github\.com/test-org-perl-missing/repo-perl-missing}xms,
+        'Secret scanning missing is reported for Perl repository'
+    );
 
     like(
         $security_tools_output,
