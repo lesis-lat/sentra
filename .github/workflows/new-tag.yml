@@ -19,7 +19,7 @@ jobs:
       - name: Read version from sentra.pl
         id: read_version
         run: |
-          VERSION=$(perl -ne "if (/our \\$VERSION = '([^']+)'/) { print \$1; exit }" sentra.pl)
+          VERSION=$(awk -F"'" '/our \$VERSION =/ {print $2; exit}' sentra.pl)
           if [ -z "${VERSION}" ]; then
             echo "Unable to read version from sentra.pl"
             exit 1
