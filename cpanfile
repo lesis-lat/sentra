@@ -9,5 +9,5 @@ requires "LWP::Protocol::https", "6.15";
 
 on 'test' => sub {
     requires "Test::More", "1.302219";
-    requires "Test::MockModule",            "0.180.0";
+    requires "Test::MockModule", "v0.182.0";
 };
