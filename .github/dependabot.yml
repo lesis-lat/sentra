@@ -12,7 +12,7 @@ updates:
     reviewers:
       - "lesis-lat/general-developers"
     assignees:
-      - "EduardaDT"
+      - "lesis-lat/general-developers"
     labels:
       - "dependencies"
       - "docker"
@@ -31,7 +31,7 @@ updates:
     reviewers:
       - "lesis-lat/general-developers"
     assignees:
-      - "EduardaDT"
+      - "lesis-lat/general-developers"
     labels:
       - "dependencies"
       - "github-actions"
