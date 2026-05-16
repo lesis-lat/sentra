@@ -1,6 +1,6 @@
 requires "Getopt::Long",                "2.58";
 requires "Mojolicious", "9.45";
-requires "LWP::UserAgent", "6.82";
+requires "LWP::UserAgent", "6.83";
 requires "JSON", "4.11";
 requires "DateTime::Format::ISO8601", "0.19";
 requires "DateTime",                    "1.66";
