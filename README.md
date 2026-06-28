@@ -80,8 +80,34 @@ perl sentra.pl --org <org> --repo <repo-name> --token <token> --metrics
 
 ### Workflows examples
 
+Run Sentra on a schedule (and on demand) using the published GitHub Action:
+
 ```yaml
+name: Sentra Posture Scan
+
+on:
+  schedule:
+    - cron: '0 8 * * 1' # every Monday at 08:00 UTC
+  workflow_dispatch:
+
+jobs:
+  sentra:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Run Sentra
+        uses: lesis-lat/sentra@main
+        with:
+          org: ${{ github.repository_owner }}
+          token: ${{ secrets.SENTRA_TOKEN }}
+          dependency: 'true'
+          maintained: 'true'
+          metrics: 'true'
 ```
+
+`SENTRA_TOKEN` must be a GitHub token with read access to the organization's
+repositories and security alerts (Dependabot, secret scanning, code scanning).
+Set any input to `'false'` to skip that check.
+
 
 ---
 
