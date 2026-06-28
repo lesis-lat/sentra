@@ -33,6 +33,6 @@ runs:
         docker run ghcr.io/instriq/sentra/sentra:latest \
           --org ${{ inputs.org }} \
           --token ${{ inputs.token }} \
-          ${{ inputs.dependency != 'true' && '--dependency' || '' }} \
-          ${{ inputs.maintained != 'true' && '--maintained' || '' }} \
-          ${{ inputs.metrics != 'true' && '--metrics' || '' }}
+          ${{ inputs.dependency == 'true' && '--dependency' || '' }} \
+          ${{ inputs.maintained == 'true' && '--maintained' || '' }} \
+          ${{ inputs.metrics == 'true' && '--metrics' || '' }}
