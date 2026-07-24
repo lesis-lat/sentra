@@ -5,7 +5,7 @@ requires "JSON", "4.11";
 requires "DateTime::Format::ISO8601", "0.19";
 requires "DateTime",                    "1.66";
 requires "Readonly", "2.05";
-requires "LWP::Protocol::https", "6.16";
+requires "LWP::Protocol::https", "6.17";
 
 on 'test' => sub {
     requires "Test::More", "1.302222";
