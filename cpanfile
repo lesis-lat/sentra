@@ -8,6 +8,6 @@ requires "Readonly", "2.05";
 requires "LWP::Protocol::https", "6.17";
 
 on 'test' => sub {
-    requires "Test::More", "1.302224";
+    requires "Test::More", "1.302225";
     requires "Test::MockModule", "v0.185.3";
 };
